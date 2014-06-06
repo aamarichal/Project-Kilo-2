@@ -6,8 +6,18 @@
 
 package project.kilo;
 
-import java.util.Random;
 import javax.swing.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.farng.mp3.*;
+import org.farng.mp3.filename.*;
+import org.farng.mp3.id3.*;
+import org.farng.mp3.lyrics3.*;
+import org.farng.mp3.object.*;
+
+
 
 
 /**
@@ -24,6 +34,7 @@ public class Kilo extends javax.swing.JFrame {
     
     public Kilo() 
     {
+        /*
         AlbumList test = new AlbumList();
         Song pa = new Song("Paranoid Anroid", "OK Computer", "Radiohead", 1997);
         Album ok = new Album(pa);
@@ -38,9 +49,38 @@ public class Kilo extends javax.swing.JFrame {
         test.addListSong(new Song ("Doe Deer", "Crystal Castles II", "Crystal Castles", 2010));
         test.addListSong(new Song("Buddy Holly", "Weezer", "Weezer", 1994));
         test.addListSong(new Song("On a Plain", "Nevermind", "Nirvana", 1991));
+        */
         
-        q = new Questions(test);
+        q = new Questions();
+        
         initComponents();
+        Score.setText(String.valueOf(0));
+        Strike.setText(String.valueOf(0));
+        Question.setText ("");
+        OptionA.setText ("");
+        OptionB.setText ("");
+        OptionC.setText ("");
+        OptionD.setText ("");
+    }
+    
+    private void addSongsFromDirectory() throws IOException, TagException{
+        JFileChooser chooser = new JFileChooser(); 
+        chooser.setCurrentDirectory(new java.io.File("."));
+        chooser.setDialogTitle("Select Music Directory");
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        chooser.setAcceptAllFileFilterUsed(false);
+        
+        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            File f = chooser.getSelectedFile();
+            
+            JOptionPane.showMessageDialog(null, "Building question base, plase wait.");
+            q.addSongsFromDirectory(f);
+            JOptionPane.showMessageDialog(null, "Question base complete, the game will now start.");
+        }
+        else {
+        System.out.println("No Selection ");
+        }
+        
     }
     
     private void RightAnswer(){
@@ -114,15 +154,10 @@ public class Kilo extends javax.swing.JFrame {
         ButtonNewgame = new javax.swing.JButton();
         LabelScore = new javax.swing.JLabel();
         Score = new javax.swing.JLabel();
-        jPanel1 = new javax.swing.JPanel();
-        Replay = new javax.swing.JButton();
-        PausePlay = new javax.swing.JButton();
-        Stop = new javax.swing.JButton();
         LabelStrike = new javax.swing.JLabel();
         Strike = new javax.swing.JLabel();
         Question = new javax.swing.JLabel();
-        LabelQuestionNO = new javax.swing.JLabel();
-        QuestionNumber = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
 
         javax.swing.GroupLayout jDialog1Layout = new javax.swing.GroupLayout(jDialog1.getContentPane());
         jDialog1.getContentPane().setLayout(jDialog1Layout);
@@ -284,22 +319,22 @@ public class Kilo extends javax.swing.JFrame {
                 .addGap(19, 19, 19)
                 .addGroup(QuestionOptionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(QuestionOptionsLayout.createSequentialGroup()
-                        .addComponent(ButtonD)
-                        .addGap(18, 18, 18)
-                        .addComponent(OptionD))
-                    .addGroup(QuestionOptionsLayout.createSequentialGroup()
                         .addComponent(ButtonA)
                         .addGap(18, 18, 18)
-                        .addComponent(OptionA))
+                        .addComponent(OptionA, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(QuestionOptionsLayout.createSequentialGroup()
+                        .addComponent(ButtonD)
+                        .addGap(18, 18, 18)
+                        .addComponent(OptionD, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(QuestionOptionsLayout.createSequentialGroup()
                         .addComponent(ButtonB)
                         .addGap(18, 18, 18)
-                        .addComponent(OptionB))
+                        .addComponent(OptionB, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(QuestionOptionsLayout.createSequentialGroup()
                         .addComponent(ButtonC)
                         .addGap(18, 18, 18)
-                        .addComponent(OptionC)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(OptionC, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         QuestionOptionsLayout.setVerticalGroup(
             QuestionOptionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -311,7 +346,7 @@ public class Kilo extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(QuestionOptionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(ButtonB)
-                    .addComponent(OptionB, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(OptionB, javax.swing.GroupLayout.DEFAULT_SIZE, 24, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(QuestionOptionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(ButtonC)
@@ -334,108 +369,69 @@ public class Kilo extends javax.swing.JFrame {
 
         Score.setText("jLabel7");
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-
-        Replay.setText("Replay");
-
-        PausePlay.setText("Pause/Play");
-
-        Stop.setText("Stop");
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(PausePlay)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(9, 9, 9)
-                        .addComponent(Replay))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(16, 16, 16)
-                        .addComponent(Stop)))
-                .addGap(12, 12, 12))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(17, 17, 17)
-                .addComponent(Replay)
-                .addGap(18, 18, 18)
-                .addComponent(PausePlay)
-                .addGap(18, 18, 18)
-                .addComponent(Stop)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        LabelStrike.setText("Strike: ");
+        LabelStrike.setText("Strikes: ");
 
         Strike.setText("jLabel2");
 
         Question.setText("jLabel3");
 
-        LabelQuestionNO.setText("QuestionNO.");
-
-        QuestionNumber.setText("jLabel2");
+        jButton1.setText("Set Music Library Folder");
+        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton1MouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(QuestionOptions, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(16, 16, 16))
             .addGroup(layout.createSequentialGroup()
-                .addGap(35, 35, 35)
-                .addComponent(ButtonNewgame, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(42, 42, 42)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(LabelScore)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(Score))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(LabelStrike)
-                        .addGap(74, 74, 74)
-                        .addComponent(Strike)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(LabelQuestionNO)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(QuestionNumber)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(Question, javax.swing.GroupLayout.PREFERRED_SIZE, 286, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(52, 52, 52))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(QuestionOptions, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jButton1)
+                                .addGap(10, 10, 10)
+                                .addComponent(ButtonNewgame, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(LabelStrike)
+                                    .addComponent(LabelScore, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 50, Short.MAX_VALUE)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(Score)
+                                    .addComponent(Strike))
+                                .addGap(10, 10, 10))
+                            .addComponent(Question, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(55, 55, 55))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(61, Short.MAX_VALUE)
+                .addContainerGap(51, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(Score)
-                            .addComponent(LabelScore))
-                        .addGap(18, 18, 18)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(LabelScore)
+                            .addComponent(Score))
+                        .addGap(27, 27, 27)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(LabelStrike)
-                            .addComponent(Strike)))
-                    .addComponent(ButtonNewgame, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(24, 24, 24)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(Question)
-                    .addComponent(LabelQuestionNO)
-                    .addComponent(QuestionNumber))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(QuestionOptions, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(Strike))
+                        .addGap(44, 44, 44))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(ButtonNewgame, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButton1))
+                        .addGap(40, 40, 40)))
+                .addComponent(Question)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(QuestionOptions, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(40, 40, 40))
         );
 
@@ -443,6 +439,14 @@ public class Kilo extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void ButtonNewgameMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ButtonNewgameMouseClicked
+        if(q.userAlbums.isListEmpty())
+            try {
+                addSongsFromDirectory();
+        } catch (IOException ex) {
+            Logger.getLogger(Kilo.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (TagException ex) {
+            Logger.getLogger(Kilo.class.getName()).log(Level.SEVERE, null, ex);
+        }
         NewGame();
         
         //and play the song 
@@ -476,6 +480,17 @@ public class Kilo extends javax.swing.JFrame {
         else
             WrongAnswer();
     }//GEN-LAST:event_ButtonDMouseClicked
+
+    private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
+        try {
+            addSongsFromDirectory();
+        } catch (IOException ex) {
+            Logger.getLogger(Kilo.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (TagException ex) {
+            Logger.getLogger(Kilo.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        NewGame();
+    }//GEN-LAST:event_jButton1MouseClicked
 
     /**
      * @param args the command line arguments
@@ -527,21 +542,17 @@ public class Kilo extends javax.swing.JFrame {
     private javax.swing.JButton ButtonC;
     private javax.swing.JButton ButtonD;
     private javax.swing.JButton ButtonNewgame;
-    private javax.swing.JLabel LabelQuestionNO;
     private javax.swing.JLabel LabelScore;
     private javax.swing.JLabel LabelStrike;
     private javax.swing.JLabel OptionA;
     private javax.swing.JLabel OptionB;
     private javax.swing.JLabel OptionC;
     private javax.swing.JLabel OptionD;
-    private javax.swing.JButton PausePlay;
     private javax.swing.JLabel Question;
-    private javax.swing.JLabel QuestionNumber;
     private javax.swing.JPanel QuestionOptions;
-    private javax.swing.JButton Replay;
     private javax.swing.JLabel Score;
-    private javax.swing.JButton Stop;
     private javax.swing.JLabel Strike;
+    private javax.swing.JButton jButton1;
     private javax.swing.JDialog jDialog1;
     private javax.swing.JDialog jDialog2;
     private javax.swing.JDialog jDialog3;
@@ -554,7 +565,6 @@ public class Kilo extends javax.swing.JFrame {
     private javax.swing.JFrame jFrame2;
     private javax.swing.JOptionPane jOptionPane1;
     private javax.swing.JOptionPane jOptionPane2;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextPane jTextPane1;
     private java.awt.List list1;

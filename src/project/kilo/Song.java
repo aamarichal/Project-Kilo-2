@@ -17,7 +17,7 @@ public class Song {
     private final String title;
     private final String album;
     private final String artist;
-    private final int year;
+    private final String year;
     
     /**
      * Constructor class for Song object; this may also need a "filepath" field
@@ -28,7 +28,7 @@ public class Song {
      * @param art name of the song's artist
      * @param y year song was released
      */
-    public Song(String t, String alb, String art, int y){
+    public Song(String t, String alb, String art, String y){
         title = t;
         album = alb;
         artist = art;
@@ -63,7 +63,7 @@ public class Song {
      * 
      * @return year song was released
      */
-    public int getYear(){
+    public String getYear(){
         return year;
     }
     

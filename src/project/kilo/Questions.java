@@ -6,7 +6,12 @@
 
 package project.kilo;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Random;
+import org.farng.mp3.MP3File;
+import org.farng.mp3.TagException;
 
 /**
  *
@@ -53,6 +58,50 @@ public class Questions {
     
     public void addUserSong(Song s){
         userAlbums.addListSong(s);
+    }
+    
+     public void addSongsFromDirectory(File f) throws IOException, TagException
+     {
+        String title;
+        String album;
+        String artist;
+        String year;
+        File[] names = f.listFiles();
+        for(File name : names){
+            if(name.getPath().endsWith(".mp3")){
+                MP3File m;
+                try{
+                m = new MP3File(name);
+                }
+                catch(TagException | FileNotFoundException |UnsupportedOperationException e){
+                    continue;
+                }
+                try{ 
+                    title = m.getID3v1Tag().getSongTitle();
+                    album = m.getID3v1Tag().getAlbumTitle();
+                    artist = m.getID3v1Tag().getArtist();
+                    year = m.getID3v1Tag().getYear();
+                    if(!title.equals("") && !album.equals("") && !artist.equals("") && !year.equals("")){
+                        Song s = new Song(title, album, artist, year);
+                        addUserSong(s);
+                    }
+                }
+                catch(NullPointerException e){
+                    title = m.getID3v2Tag().getSongTitle();
+                    album = m.getID3v2Tag().getAlbumTitle();
+                    artist = m.getID3v2Tag().getLeadArtist();
+                    year = m.getID3v2Tag().getYearReleased();
+                    if(!title.equals("") && !album.equals("") && !artist.equals("") && !year.equals("")){
+                        Song s = new Song(title, album, artist, year);
+                        addUserSong(s);
+                    }
+                }
+                
+                
+            }
+            if(name.isDirectory())
+                addSongsFromDirectory(name);                
+        }
     }
     
     public Album getAlbumIndex(int i){
@@ -126,25 +175,25 @@ public class Questions {
     {
         Song s = getRandomSong();
         question = "The song " + s.getTitle() + " by " + s.getArtist() + " is from what year?";
-        RightAnswer = Integer.toString(s.getYear());
+        RightAnswer = s.getYear();
         boolean same = false;
         for(int i=0; i<3; i++){
             Song w = getRandomSong();
             if(i>0){
                 for(int j=i; j>-1; j--){
-                    if(Integer.toString(w.getYear()).equals(WrongAnswer[j])) same = true;
+                    if(w.getYear().equals(WrongAnswer[j])) same = true;
                 }
             }
-            while(Integer.toString(w.getYear()).equals(RightAnswer) || same == true){
+            while(w.getYear().equals(RightAnswer) || same == true){
                 w = getRandomSong();
                 same = false;
                 if(i>0){
                     for(int j=i; j>-1; j--){
-                        if(Integer.toString(w.getYear()).equals(WrongAnswer[j])) same = true;
+                        if(w.getYear().equals(WrongAnswer[j])) same = true;
                     }
             }
             }
-            WrongAnswer[i] = Integer.toString(w.getYear());
+            WrongAnswer[i] = w.getYear();
             
         }   
     }
@@ -206,25 +255,25 @@ public class Questions {
     {
         Song s = getRandomSong();
         question = "The album " + s.getAlbum() + " is from what year?";
-        RightAnswer = Integer.toString(s.getYear());
+        RightAnswer = s.getYear();
         boolean same = false;
         for(int i=0; i<3; i++){
             Song w = getRandomSong();
             if(i>0){
                 for(int j=i; j>-1; j--){
-                    if(Integer.toString(w.getYear()).equals(WrongAnswer[j])) same = true;
+                    if(w.getYear().equals(WrongAnswer[j])) same = true;
                 }
             }
-            while(Integer.toString(w.getYear()).equals(RightAnswer) || same == true){
+            while(w.getYear().equals(RightAnswer) || same == true){
                 w = getRandomSong();
                 same = false;
                 if(i>0){
                     for(int j=i; j>-1; j--){
-                        if(Integer.toString(w.getYear()).equals(WrongAnswer[j])) same = true;
+                        if(w.getYear().equals(WrongAnswer[j])) same = true;
                     }
             }
             }
-            WrongAnswer[i] = Integer.toString(w.getYear());
+            WrongAnswer[i] = w.getYear();
             
         }   
     }
@@ -286,7 +335,7 @@ public class Questions {
     public void QYearSong() // given a year, pick a song from it 9
     {
           Song s = getRandomSong();
-        question = "Which song was created in the year " + s.getYear();
+        question = "Which song was created in the year " + s.getYear() + "?";
         RightAnswer = s.getTitle();
         boolean same = false;
         for(int i=0; i<3; i++){
@@ -312,7 +361,7 @@ public class Questions {
     public void QYearAlbum() // given a year, pick an album from it 10/else
     {
         Song s = getRandomSong();
-        question = "Which album was created in the year " + s.getYear();
+        question = "Which album was created in the year " + s.getYear() + "?";
         RightAnswer = s.getAlbum();
         boolean same = false;
         for(int i=0; i<3; i++){
@@ -339,6 +388,7 @@ public class Questions {
         int QNumber = (1+(int)(Math.random()*10));
         return QNumber;
     }
+    
     public void askQuestion(){
         int qN = getQNumber();
         if (qN == 1)
